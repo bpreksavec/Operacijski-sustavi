@@ -1,0 +1,348 @@
+1. Odrediti podatke korisničkog računa s kojim ste se spojili na linux.etfos.hr:
+student08@linux:/etc$ cat passwd | grep student08
+korisničko ime: student08
+oznaka polja za zaporku (najčešće znakovi 'x' ili '!'): x
+user identification (UID) number: 9577
+group membership (GID) number: 2000
+korisnički podaci: Student08 FERIT,Kampus,2. godina,Preddiplomski sveucilisni  studij
+putanja korisničkog (home) direktorija: /home/stud/student08
+oznaka ljuske: /bin/bash
+
+
+2. Pozicionirajte se u /proc direktorij. Proučite sadržaj direktorija i pronađite datoteku u
+kojoj se nalaze sljedeće informacije:
+	
+	a. Koje particije čine datotečni sustav poslužitelja?
+student08@linux:/proc$ cat /partitions
+	   2        0          4 fd0
+   8        0   52428800 sda
+   8        1   50254848 sda1
+   8        2          1 sda2
+   8        5    2170880 sda5
+  11        0    1048575 sr0
+	
+	b. Koliko vremena poslužitelj radi (uptime)?
+student08@linux:~$ cat /proc/uptime
+40337896.02 11535859.32
+	
+	c. Koji procesor se nalazi u poslužitelju? Navedite ime modela, frekvenciju takta i
+	broj jezgri.
+student08@linux:~$ cat /proc/cpuinfo
+model name      : Intel(R) Xeon(R) CPU E5-2403 0 @ 1.80GHz
+cpu MHz         : 1795.656
+cpu cores       : 1
+
+
+3. Korištenjem naučenih naredbi za jednostavno kretanje kroz datotečni sustav,
+odgovorite na sljedeća pitanja:
+	
+	a. Na koji način možete odrediti direktorij u kojem se nalazite?
+student08@linux:~$ pwd
+/home/stud/student08
+Koristeci naredbu pwd.
+	
+	b. Pokrenite naredbu cd bez dodatnih opcija i zaključite gdje vas je to odvelo. Ako
+		se trenutno nalazimo u direktoriju /home/student50/dir1 i želimo otići u
+		direktorij /home/student50, koji prečac možemo koristiti?
+student08@linux:~/dir1$ cd ..
+student08@linux:~$
+Naredba cd nas vraca u root direktorij.
+Koristimo precac ..
+
+	c. Koristeći relativnu putanju izlistati u dugom obliku sadržaj direktorija dir1.
+		Navesti izlistane direktorije i izlistane datoteke. Koje su skrivene?
+student08@linux:~$ ls -l dir1
+total 8
+drwxr-xr-x 2 student08 stud 4096 Jan 30 10:30 dir11
+drwxr-xr-x 2 student08 stud 4096 Jan 30 10:30 dir12
+-rw-r--r-- 1 student08 stud    0 Mar 12 08:38 file1.txt
+
+student08@linux:~$ ls -l dir1 -a
+total 16
+drwxr-xr-x 4 student08 stud 4096 Mar 12 08:48 .
+drwxr-xr-x 5 student08 stud 4096 Mar 12 08:59 ..
+drwxr-xr-x 2 student08 stud 4096 Jan 30 10:30 dir11
+drwxr-xr-x 2 student08 stud 4096 Jan 30 10:30 dir12
+-rw-r--r-- 1 student08 stud    0 Jan 30 10:30 .file0.txt
+-rw-r--r-- 1 student08 stud    0 Mar 12 08:38 file1.txt
+
+Skrivene su ., .. i .file0.txt
+
+	d. Pokrenite naredbu ls s opcijama –R, -r i –t i opišite dobiveni izlaz. Koju
+		naredbu možemo koristiti za prikaz skrivenih datoteka?
+student08@linux:~$ ls -R
+.:
+bb.txt              c.txt          dir11  head_tail   prezime.ime.txt
+beskonacni_program  datoteka1.txt  dir2   jedan       test.txt
+brojke.txt          datoteka2.txt  dva    linux1.txt  tory
+b.txt               dir1           file   linux.txt
+
+./dir1:
+dir11  dir12  file1.txt
+
+./dir1/dir11:
+file11.txt
+
+./dir1/dir12:
+
+./dir2:
+
+./file:
+cli.cpp  probni.exe  probni.tar  probni.txt  SlikaTelop.gif  SlikaTelop.jpg
+
+student08@linux:~$ ls -r
+tory             linux1.txt  dva    datoteka2.txt  brojke.txt
+test.txt         jedan       dir2   datoteka1.txt  beskonacni_program
+prezime.ime.txt  head_tail   dir11  c.txt          bb.txt
+linux.txt        file        dir1   b.txt
+
+student08@linux:~$ ls -t
+tory             brojke.txt          dva        linux1.txt  c.txt
+dir1             beskonacni_program  file       linux.txt   dir11
+bb.txt           datoteka1.txt       head_tail  dir2        test.txt
+prezime.ime.txt  datoteka2.txt       jedan      b.txt
+
+Naredba -R rekruzivno prikazuje sadržaj poddirektorija i direktorija.
+Naredba -r prikazuje ima slicnu svrhu kao i -R samo u obratnom smjeru.
+Naredba -t prikazuje sadrzaj poredan vremenski od najnovijeg prema najstarije.
+
+
+4. Korištenjem naučenih naredbi za jednostavan rad s datotekama, odgovorite na
+sljedeća pitanja:
+
+	a. Pokrenite naredbu file za nekoliko različitih direktorija i datoteka i opišite
+	dobiveni izlaz.
+student08@linux:~$ file dir1
+dir1: directory
+
+student08@linux:~$ file dva
+dva: ASCII text
+
+student08@linux:~$ file beskonacni_program
+beskonacni_program: ASCII text
+
+	b. Pokrenite naredbu cat na različitim datotekama i direktorijima. Zatim
+	pokušajte spojiti više datoteka u naredbi. Opišite dobivene izlaze.
+student08@linux:~$ cat bb.txt
+student08@linux:~$ cat brojke.txt
+8
+12
+4
+22
+student08@linux:~$ cat test.txt
+Ovo je datoteka test.txt
+
+student08@linux:~$ cat brojke.txt bb.txt linux.txt
+8
+12
+4
+22
+Linux is an operating system that was initially created as a hobby by a
+young student, Linus Torvalds, at the University of Helsinki in Finland.
+Linus had an interest in Minix, a small UNIX system, and decided to
+develop a system that exceeded the Minix standards. He began his work in
+1991 when he released version 0.02 and worked steadily until 1994 when
+version 1.0 of the Linux Kernel was released. The kernel, at the heart
+of all Linux systems, is developed and released under the GNU General
+Public License and its source code is freely available to everyone. It
+is this kernel that forms the base around which a Linux operating system
+is developed. There are now literally hundreds of companies and
+organizations and an equal number of individuals that have released
+their own versions of operating systems based on the Linux kernel. More
+information on the kernel can be found at our sister site, LinuxHQ and
+at the official Linux Kernel Archives. The current full-featured version
+is 2.6 (released December 2003) and development continues.
+
+Apart from the fact that it's freely distributed, Linux's functionality,
+adaptability and robustness, has made it the main alternative for
+proprietary Unix and Microsoft operating systems. IBM, Hewlett-Packard
+and other giants of the computing world have embraced Linux and support
+its ongoing development. More than a decade after its initial release,
+Linux is being adopted worldwide as a server platform primarily. Its use
+as a home and office desktop operating system is also on the rise. The
+operating system can also be incorporated directly into microchips in a
+process called "embedding" and is increasingly being used this way in
+appliances and devices.
+
+Throughout most of the 1990's, tech pundits, largely unaware of Linux's
+potential, dismissed it as a computer hobbyist project, unsuitable for
+the general public's computing needs. Through the efforts of developers
+of desktop management systems such as KDE and GNOME, office suite
+project OpenOffice.org and the Mozilla web browser project, to name only
+a few, there are now a wide range of applications that run on Linux and
+it can be used by anyone regardless of his/her knowledge of computers.
+Those curious to see the capabilities of Linux can download a live CD
+version called Knoppix . It comes with everything you might need to
+carry out day-to-day tasks on the computer and it needs no installation.
+It will run from a CD in a computer capable of booting from the CD
+drive. Those choosing to continue using Linux can find a variety of
+versions or "distributions" of Linux that are easy to install, configure
+and use. Information on these products is available in our distribution
+section and can be found by selecting the mainstream/general public
+category.
+
+Kada koristimo naredbu cat ona nam iscita sadrzaj datoteke, kada u jednoj naredbi stavimo vise datoteka za iscitavanje ona nam iscita sve datoteke onim redom kojim smo ih naveli.
+
+	c. Kreirajte novu datoteku oblika <ime.prezime> u vašem home (cd ~) direktoriju.
+	Preimenujte datoteku u oblik <prezime.ime>.
+student08@linux:~$ touch benjamin.preksavec
+student08@linux:~$ ls -l
+total 68
+-rw-r--r-- 1 student08 stud     0 Mar 12 08:45 bb.txt
+-rw-r--r-- 1 student08 stud     0 Mar 12 09:48 benjamin.preksavec
+-rwxr-xr-x 1 student08 stud    82 Jan 30 10:30 beskonacni_program
+-rw-r--r-- 1 student08 stud    10 Jan 30 10:30 brojke.txt
+-rw-r--r-- 1 student08 stud     0 Jan 30 10:30 b.txt
+-rw-r--r-- 1 student08 stud     0 Jan 30 10:30 c.txt
+-rw-r--r-- 1 student08 stud    63 Jan 30 10:30 datoteka1.txt
+-rw-r--r-- 1 student08 stud    63 Jan 30 10:30 datoteka2.txt
+drwxr-xr-x 4 student08 stud  4096 Mar 12 08:48 dir1
+-rw-r--r-- 1 student08 stud     0 Jan 30 10:30 dir11
+drwxr-xr-x 2 student08 stud  4096 Jan 30 10:30 dir2
+-rw-r--r-- 1 student08 stud    14 Jan 30 10:30 dva
+drwxr-xr-x 2 student08 stud  4096 Jan 30 10:30 file
+-rw-r--r-- 1 student08 stud   111 Jan 30 10:30 head_tail
+-rw-r--r-- 1 student08 stud    14 Jan 30 10:30 jedan
+-rw-r--r-- 1 student08 stud  4134 Jan 30 10:30 linux1.txt
+-rw-r--r-- 1 student08 stud  2819 Jan 30 10:30 linux.txt
+-rw-r--r-- 1 student08 stud     0 Mar 11 13:03 prezime.ime.txt
+-rw-r--r-- 1 student08 stud    24 Jan 30 10:30 test.txt
+-rw-r--r-- 1 student08 stud 11603 Mar 12 08:59 tory
+
+student08@linux:~$ mv benjamin.preksavec preksavec.benjamin
+student08@linux:~$ ls -l
+total 68
+-rw-r--r-- 1 student08 stud     0 Mar 12 08:45 bb.txt
+-rwxr-xr-x 1 student08 stud    82 Jan 30 10:30 beskonacni_program
+-rw-r--r-- 1 student08 stud    10 Jan 30 10:30 brojke.txt
+-rw-r--r-- 1 student08 stud     0 Jan 30 10:30 b.txt
+-rw-r--r-- 1 student08 stud     0 Jan 30 10:30 c.txt
+-rw-r--r-- 1 student08 stud    63 Jan 30 10:30 datoteka1.txt
+-rw-r--r-- 1 student08 stud    63 Jan 30 10:30 datoteka2.txt
+drwxr-xr-x 4 student08 stud  4096 Mar 12 08:48 dir1
+-rw-r--r-- 1 student08 stud     0 Jan 30 10:30 dir11
+drwxr-xr-x 2 student08 stud  4096 Jan 30 10:30 dir2
+-rw-r--r-- 1 student08 stud    14 Jan 30 10:30 dva
+drwxr-xr-x 2 student08 stud  4096 Jan 30 10:30 file
+-rw-r--r-- 1 student08 stud   111 Jan 30 10:30 head_tail
+-rw-r--r-- 1 student08 stud    14 Jan 30 10:30 jedan
+-rw-r--r-- 1 student08 stud  4134 Jan 30 10:30 linux1.txt
+-rw-r--r-- 1 student08 stud  2819 Jan 30 10:30 linux.txt
+-rw-r--r-- 1 student08 stud     0 Mar 12 09:48 preksavec.benjamin
+-rw-r--r-- 1 student08 stud     0 Mar 11 13:03 prezime.ime.txt
+-rw-r--r-- 1 student08 stud    24 Jan 30 10:30 test.txt
+-rw-r--r-- 1 student08 stud 11603 Mar 12 08:59 tory
+
+
+	d. Kreirajte novi direktorij u vašem home direktoriju. Možete li premjestiti vaš novi
+	direktorij na razinu na kojoj je i /home direktorij? Kopirajte cijeli sadržaj iz
+	direktorija dir1 u vaš novi direktorij. Izlistajte sadržaj novog direktorija sortiran
+	po obrnutom abecednom redoslijedu. 
+student08@linux:~$ mkdir dir88
+student08@linux:~$ ls -l
+total 72
+-rw-r--r-- 1 student08 stud     0 Mar 12 08:45 bb.txt
+-rwxr-xr-x 1 student08 stud    82 Jan 30 10:30 beskonacni_program
+-rw-r--r-- 1 student08 stud    10 Jan 30 10:30 brojke.txt
+-rw-r--r-- 1 student08 stud     0 Jan 30 10:30 b.txt
+-rw-r--r-- 1 student08 stud     0 Jan 30 10:30 c.txt
+-rw-r--r-- 1 student08 stud    63 Jan 30 10:30 datoteka1.txt
+-rw-r--r-- 1 student08 stud    63 Jan 30 10:30 datoteka2.txt
+drwxr-xr-x 4 student08 stud  4096 Mar 12 08:48 dir1
+-rw-r--r-- 1 student08 stud     0 Jan 30 10:30 dir11
+drwxr-xr-x 2 student08 stud  4096 Jan 30 10:30 dir2
+drwxr-xr-x 2 student08 stud  4096 Mar 12 09:50 dir88
+-rw-r--r-- 1 student08 stud    14 Jan 30 10:30 dva
+drwxr-xr-x 2 student08 stud  4096 Jan 30 10:30 file
+-rw-r--r-- 1 student08 stud   111 Jan 30 10:30 head_tail
+-rw-r--r-- 1 student08 stud    14 Jan 30 10:30 jedan
+-rw-r--r-- 1 student08 stud  4134 Jan 30 10:30 linux1.txt
+-rw-r--r-- 1 student08 stud  2819 Jan 30 10:30 linux.txt
+-rw-r--r-- 1 student08 stud     0 Mar 12 09:48 preksavec.benjamin
+-rw-r--r-- 1 student08 stud     0 Mar 11 13:03 prezime.ime.txt
+-rw-r--r-- 1 student08 stud    24 Jan 30 10:30 test.txt
+-rw-r--r-- 1 student08 stud 11603 Mar 12 08:59 tory
+
+student08@linux:~$ cp -r dir1/* dir88/
+student08@linux:~$ ls -r dir88
+file1.txt  dir12  dir11
+
+
+5. Korištenjem naučenih naredbi za jednostavno pretraživanje rječnika, odgovorite na
+sljedeća pitanja:
+	a. Proučiti naredbu passwd u prvoj i petoj sekciji. Koje područje upotrebe naredbe
+	passwd opisuju pojedine sekcije?
+
+NAME
+       passwd - change user password
+CAVEATS
+       Password complexity checking may vary from site to site. The user is
+       urged to select a password as complex as he or she feels comfortable
+       with.
+
+       Users may not be able to change their password on a system if NIS is
+       enabled and they are not logged into the NIS server.
+
+       passwd uses PAM to authenticate users and to change their passwords.
+
+Name sekcija ispisuje ime naredbe i njenu upotrebu.
+Caveats sekcija opisuje zasto se ta naredba koristi.
+
+
+	b. Izlistati sve naredbe koje u sebi sadržavaju pojam ssh. Koja su dva načina da se
+	to učini?
+student08@linux:~$ man -k ssh
+authorized_keys (5)  - OpenSSH SSH daemon
+rlogin (1)           - OpenSSH SSH client (remote login program)
+rsh (1)              - OpenSSH SSH client (remote login program)
+slogin (1)           - OpenSSH SSH client (remote login program)
+ssh (1)              - OpenSSH SSH client (remote login program)
+ssh-add (1)          - adds private key identities to the authentication agent
+ssh-agent (1)        - authentication agent
+ssh-argv0 (1)        - replaces the old ssh command-name as hostname handling
+ssh-copy-id (1)      - use locally available keys to authorise logins on a rem...
+ssh-keygen (1)       - authentication key generation, management and conversion
+ssh-keyscan (1)      - gather ssh public keys
+ssh-keysign (8)      - ssh helper program for host-based authentication
+ssh-pkcs11-helper (8) - ssh-agent helper program for PKCS#11 support
+ssh_config (5)       - OpenSSH SSH client configuration files
+sshd (8)             - OpenSSH SSH daemon
+sshd_config (5)      - OpenSSH SSH daemon configuration file
+
+
+	c. Koje opcije ls naredbe omogućuju sortiranje ispisa sadržaja direktorija prema
+	vremenu modifikacije datoteke te prema veličini datoteke?
+-t naredba sortira prema vremenu
+-It soritra prema vremenu u obrnutom redoslijedu
+-S soritra prema velicini
+-IS sortira prema velicini u obrnutom smijeru
+
+	d. Pomoću naredbe man proučiti dodatne mogućnosti naredbi cp i mv te navesti
+	barem 3 dodatne mogućnosti za svaku.
+
+student08@linux:~$ man cp
+ -f, --force
+              if an existing destination file cannot be opened, remove it  and
+              try  again  (this  option  is ignored when the -n option is also
+              used)
+
+       -i, --interactive
+              prompt before overwrite (overrides a previous -n option)
+
+       -H     follow command-line symbolic links in SOURCE
+
+       -l, --link
+              hard link files instead of copying
+
+student08@linux:~$ man mv
+-S, --suffix=SUFFIX
+              override the usual backup suffix
+
+       -t, --target-directory=DIRECTORY
+              move all SOURCE arguments into DIRECTORY
+
+       -T, --no-target-directory
+              treat DEST as a normal file
+
+       -u, --update
+
