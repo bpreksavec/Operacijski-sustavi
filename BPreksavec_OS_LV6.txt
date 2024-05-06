@@ -1,0 +1,252 @@
+**Zadatak 1**
+student08@linux:~$ touch zadatak1.c
+student08@linux:~$ nano zadatak1.c
+------------------------------------------------------------------
+#include <stdio.h>
+
+#define MEMORY_SIZE 1000
+#define NUM_BLOCKS 5
+
+// Struktura bloka memorije
+typedef struct {
+    int start_address;
+    int size;
+    int is_allocated;
+} MemoryBlock;
+
+MemoryBlock memory[NUM_BLOCKS];
+
+// Inicijalizacija memorije
+void initialize_memory() {
+    int i;
+    for (i = 0; i < NUM_BLOCKS; i++) {
+        memory[i].start_address = i * MEMORY_SIZE / NUM_BLOCKS;
+        memory[i].size = MEMORY_SIZE / NUM_BLOCKS;
+        memory[i].is_allocated = 0;
+    }
+}
+
+void display_memory() {
+    int i;
+    printf("Memory:\n");
+    for (i = 0; i < NUM_BLOCKS; i++) {
+        printf("Block %d: Start address: %d, Size: %d, Allocated: %s\n", 
+               i, memory[i].start_address, memory[i].size, 
+               memory[i].is_allocated ? "Yes" : "No");
+    }
+    printf("\n");
+}
+
+int allocate_memory(int size) {
+    int i;
+    for (i = 0; i < NUM_BLOCKS; i++) {
+        if (!memory[i].is_allocated && memory[i].size >= size) {
+            memory[i].is_allocated = 1;
+            return memory[i].start_address;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    initialize_memory();
+    display_memory();
+
+    int allocated_address = allocate_memory(200);
+    if (allocated_address != -1) {
+        printf("Memory allocated at address: %d\n", allocated_address);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    display_memory();
+
+    return 0;
+}
+-----------------------------------------------------------------------
+student08@linux:~$ g++ zadatak1.c -o zadatak1
+student08@linux:~$ ./zadatak1
+Memory:
+Block 0: Start address: 0, Size: 200, Allocated: No
+Block 1: Start address: 200, Size: 200, Allocated: No
+Block 2: Start address: 400, Size: 200, Allocated: No
+Block 3: Start address: 600, Size: 200, Allocated: No
+Block 4: Start address: 800, Size: 200, Allocated: No
+
+Memory allocated at address: 0
+Memory:
+Block 0: Start address: 0, Size: 200, Allocated: Yes
+Block 1: Start address: 200, Size: 200, Allocated: No
+Block 2: Start address: 400, Size: 200, Allocated: No
+Block 3: Start address: 600, Size: 200, Allocated: No
+Block 4: Start address: 800, Size: 200, Allocated: No
+
+**Zadatak 2**
+student08@linux:~$ touch zadatak2.c
+student08@linux:~$ nano zadatak2.c
+------------------------------------------------------------------------
+#include <stdio.h>
+
+#define MEMORY_SIZE 1000
+#define NUM_BLOCKS 5
+
+typedef struct {
+    int start_address;
+    int size;
+    int is_allocated;
+} MemoryBlock;
+
+MemoryBlock memory[NUM_BLOCKS];
+
+// Inicijalizacija memorije
+void initialize_memory() {
+    int i;
+    for (i = 0; i < NUM_BLOCKS; i++) {
+        memory[i].start_address = i * MEMORY_SIZE / NUM_BLOCKS;
+        memory[i].size = MEMORY_SIZE / NUM_BLOCKS;
+        memory[i].is_allocated = 0;
+    }
+}
+
+void display_memory() {
+    int i;
+    printf("Memory:\n");
+    for (i = 0; i < NUM_BLOCKS; i++) {
+        printf("Block %d: Start address: %d, Size: %d, Allocated: %s\n", 
+               i, memory[i].start_address, memory[i].size, 
+               memory[i].is_allocated ? "Yes" : "No");
+    }
+    printf("\n");
+}
+
+int allocate_memory(int size) {
+    int i, worst_fit_index = -1, max_fragmentation = -1;
+    for (i = 0; i < NUM_BLOCKS; i++) {
+        if (!memory[i].is_allocated && memory[i].size >= size) {
+            int fragmentation = memory[i].size - size;
+            if (fragmentation > max_fragmentation) {
+                max_fragmentation = fragmentation;
+                worst_fit_index = i;
+            }
+        }
+    }
+    
+    if (worst_fit_index != -1) {
+        memory[worst_fit_index].is_allocated = 1;
+        return memory[worst_fit_index].start_address;
+    } else {
+        return -1;
+    }
+}
+
+int main() {
+    initialize_memory();
+    display_memory();
+
+    int allocated_address = allocate_memory(200);
+    if (allocated_address != -1) {
+        printf("Memory allocated at address: %d\n", allocated_address);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    display_memory();
+
+    return 0;
+}
+-------------------------------------------------------------------------------
+student08@linux:~$ g++ zadatak2.c -o zadatak2
+student08@linux:~$ ./zadatak2
+Memory:
+Block 0: Start address: 0, Size: 200, Allocated: No
+Block 1: Start address: 200, Size: 200, Allocated: No
+Block 2: Start address: 400, Size: 200, Allocated: No
+Block 3: Start address: 600, Size: 200, Allocated: No
+Block 4: Start address: 800, Size: 200, Allocated: No
+
+Memory allocated at address: 0
+Memory:
+Block 0: Start address: 0, Size: 200, Allocated: Yes
+Block 1: Start address: 200, Size: 200, Allocated: No
+Block 2: Start address: 400, Size: 200, Allocated: No
+Block 3: Start address: 600, Size: 200, Allocated: No
+Block 4: Start address: 800, Size: 200, Allocated: No
+
+**Zadatak 3**
+	a, c, d, b, b, a, e, d, a, b, c, e, a
+1	a, a, a, a, a, a, e, e, e, e, e, e, e
+2	-, c, c, c, c, c, c, c, c, c, c, c, c
+3	-, -, d, d, d, d, d, d, d, d, d, d, d
+4	-, -, -, b, b, b, b, b, b, b, b, b, a
+	x  x  x  x        x     x     x     x
+Page Fault(x) = 7
+Ovdje je bitno napomenuti da FIFO algoritam zamjenjuje najstariju stranicu koja je u memoriji, u skladu s redoslijedom dolaska.
+
+**Zadatak 4**
+	a, c, d, b, b, a, e, d, a, b, c, e, a
+1	a, a, a, a, a, e, e, e, e, e, e, e, e
+2	-, c, c, c, c, c, c, c, c, c, c, c, c
+3	-, -, d, d, d, d, d, d, d, d, d, d, d
+4	-, -, -, b, b, b, b, a, a, a, a, a, a
+Page Fault(x) = 6
+LRU algoritam zamjenjuje stranicu koja nije korištena najskorije, što znači da se u svakom trenutku prati redoslijed korištenja stranica kako bi se odlučilo koja će biti zamijenjena.
+
+**Zadatak 5**
+student08@linux:~$ touch zadata5.c
+student08@linux:~$ nano zadatak5.c
+---------------------------------------------------------
+#include <stdio.h>
+
+#define FRAME_COUNT 2
+#define PAGE_COUNT 2
+
+int main() {
+    int a[PAGE_COUNT][PAGE_COUNT];
+    int b[PAGE_COUNT][PAGE_COUNT];
+
+    // Inicijalizacija matrice A i B
+    for (int i = 0; i < PAGE_COUNT; i++) {
+        for (int j = 0; j < PAGE_COUNT; j++) {
+            a[i][j] = i + j;
+            b[i][j] = i - j;
+        }
+    }
+
+    // Simulacija LRU algoritma
+    int frames[FRAME_COUNT] = {-1, -1}; // Inicijalno nema nijedne stranice u okvirima
+    int page_faults = 0;
+
+    for (int i = 0; i < PAGE_COUNT; i++) {
+        for (int j = 0; j < PAGE_COUNT; j++) {
+            int pageIndex = i * PAGE_COUNT + j; // Pretvara 2D indekse u 1D indeks
+            int pageInFrames = 0;
+            
+            for (int k = 0; k < FRAME_COUNT; k++) {
+                if (frames[k] == pageIndex) {
+                    pageInFrames = 1;
+                    break;
+                }
+            }
+
+            if (!pageInFrames) {
+                page_faults++;
+                
+                // Pronađi najmanje korišteni okvir i zamijeni ga stranicom
+                int least_used = 0;
+                for (int k = 1; k < FRAME_COUNT; k++) {
+                    if (frames[k] != frames[least_used] && frames[k] < frames[least_used])
+                        least_used = k;
+                }
+                frames[least_used] = pageIndex;
+            }
+        }
+    }
+
+    printf("Number of page faults: %d\n", page_faults);
+
+    return 0;
+}
+-------------------------------------------------------
+student08@linux:~$ g++ zadatak5.c -o zadatak5
+student08@linux:~$ ./zadatak5
+Number of page faults: 4
