@@ -1,0 +1,280 @@
+**Zadatak 1**
+student08@linux:~$ nano LV7zadatak1
+-----------------------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+void* najveci();
+void* najmanji();
+void* srednjaVrijednost();
+
+int polje[5] = {1,5,3,7,4};
+
+int main()
+{
+        pthread_t thread1, thread2, thread3;
+        int rez1, rez2;
+        float rez3;
+        rez1 = pthread_create (&thread1, NULL, najveci, NULL);
+        rez2 = pthread_create (&thread2, NULL, najmanji, NULL);
+        rez3 = pthread_create (&thread3, NULL, srednjaVrijednost, NULL);
+
+        pthread_join (thread1, NULL);
+        pthread_join (thread2, NULL);
+        pthread_join (thread3, NULL);
+
+        return 0;
+}
+
+void* najveci(){
+        int najveci = polje[0];
+        for(int i = 0; i<5; i++){
+                if(najveci < polje[i]){
+                        najveci = polje[i];
+                }
+        }
+printf("Najveci element iznosi: %d\n", najveci);
+}
+
+void* najmanji(){
+    int najmanji = polje[0];
+    for(int i = 0; i<5; i++){
+        if(najmanji > polje[i]){
+            najmanji = polje[i];
+        }
+    }
+    printf("Najmanji element iznosi: %d\n", najmanji);
+}
+
+void* srednjaVrijednost(){
+    int suma = 0;
+    float sv;
+    for(int i = 0; i<5; i++){
+        suma += polje[i];
+    }
+    sv = suma/5;
+    printf("Srednja vrijednost iznosi: %f\n", sv);
+}
+-----------------------------------------------------------------
+student08@linux:~$ gcc -o LV7zadatak1 LV7zadatak1.c -lpthread
+student08@linux:~$ ./LV7zadatak1
+Najveci element iznosi: 7
+Srednja vrijednost iznosi: 4.000000
+Najmanji element iznosi: 1
+
+
+**Zadatak 2**
+student08@linux:~$ nano LV7zadatak2
+-----------------------------------------------------------------
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+float polje[5] = {1,5,3,7,4};
+
+void* kvadriranje();
+void* korjenovanje();
+
+int main()
+{
+    pthread_t thread1, thread2;
+    float rez1, rez2;
+    rez1 = pthread_create (&thread1, NULL, kvadriranje, NULL);
+    rez2 = pthread_create (&thread2, NULL, korjenovanje, NULL);
+
+    pthread_join (thread1, NULL);
+    pthread_join (thread2, NULL);
+
+    return 0;
+}
+
+void* kvadriranje(){
+    while(1){
+    for(int i = 0; i<5; i++){
+        polje[i] *= polje[i];
+    }
+
+    for(int i = 0; i<5; i++){
+        printf("%f ", polje[i]);
+        }
+    printf("\n");
+    sleep(1);
+    }
+}
+
+void* korjenovanje(){
+    while(1){
+    for(int i = 0; i<5; i++){
+        polje[i] = sqrt(polje[i]);
+        }
+    for(int i = 0; i<5; i++){
+        printf("%f ", polje[i]);
+        }
+    printf("\n");
+    sleep(1);
+    }
+}
+---------------------------------------------------------------
+student08@linux:~$ gcc -o LV7zadatak2 LV7zadatak2.c -lpthread
+student08@linux:~$ /.LV7zadatak2
+1.000000 5.000000 3.000000 7.000000 4.000000 
+1.000000 5.000000 3.000000 7.000000 4.000000 
+1.000000 25.000000 9.000000 49.000000 16.000000
+
+
+**Zadatak 3**
+student08@linux:~$ nano LV7zad3
+---------------------------------------------------------------
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+float polje[5] = {1,5,3,7,4};
+
+void* kvadriranje();
+void* korjenovanje();
+int flags[2];
+int turn;
+
+int main()
+{
+    pthread_t thread1, thread2;
+    float rez1, rez2;
+    rez1 = pthread_create (&thread1, NULL, kvadriranje, NULL);
+    rez2 = pthread_create (&thread2, NULL, korjenovanje, NULL);
+    
+    pthread_join (thread1, NULL);
+    pthread_join (thread2, NULL);
+
+    return 0;
+}
+
+void* kvadriranje(){
+    while(1){
+    flags[0] = 1;
+    while (flags[1]) {
+        if (turn == 1) {
+            flags[0] = 0;
+    while (turn == 1);
+    flags[0] = 1;
+        }   
+    }
+    for(int i = 0; i<5; i++){
+        polje[i] *= polje[i];
+    }
+   
+    for(int i = 0; i<5; i++){
+        printf("%f ", polje[i]);
+        }
+    printf("\n");    
+    turn = 1;
+    flags[0] = 0;
+    sleep(1);
+    } 
+}
+
+void* korjenovanje(){
+    while(1){
+    flags[1] = 1;
+    while (flags[0]) {
+        if (turn == 1) {
+            flags[1] = 0;
+    while (turn == 1);
+    flags[1] = 1;
+        }   
+    }
+    for(int i = 0; i<5; i++){
+        polje[i] = sqrt(polje[i]);
+        }
+    for(int i = 0; i<5; i++){
+        printf("%f ", polje[i]);
+        }
+        printf("\n");
+    turn = 1;
+    flags[1] = 0;
+    sleep(1);
+    }
+}
+-------------------------------------------------------
+student10@linux:~$ gcc -o LV7zad3 LV7zad3.c -lpthread
+student10@linux:~$ ./LV7zad3
+1.000000 25.000000 9.000000 49.000000 16.000000 
+1.000000 5.000000 3.000000 7.000000 4.000000 
+1.000000 25.000000 9.000000 49.000000 16.000000 
+1.000000 625.000000 81.000000 2401.000000 256.000000
+
+**Zadatak 4**
+tudent08@linux:~$ nano LV7zad4
+-------------------------------------------------------
+#include <math.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+float polje[5] = {1,5,3,7,4};
+
+void* kvadriranje();
+void* korjenovanje();
+
+int flags[2];
+int turn;
+
+int main()
+{
+    pthread_t thread1, thread2;
+    float rez1, rez2;
+    rez1 = pthread_create (&thread1, NULL, kvadriranje, NULL);
+    rez2 = pthread_create (&thread2, NULL, korjenovanje, NULL);
+    
+    pthread_join (thread1, NULL);
+    pthread_join (thread2, NULL);
+
+    return 0;
+}
+
+void* kvadriranje(){
+    while(1){
+        flags[0] = 1;
+        turn = 1;
+        while(flags[1]&&turn == 1);
+    for(int i = 0; i<5; i++){
+        polje[i] *= polje[i];
+    }
+   
+    for(int i = 0; i<5; i++){
+        printf("%f ", polje[i]);
+        }
+    printf("\n");
+    flags[0] = 0;
+    sleep(1);
+    } 
+}
+
+void* korjenovanje(){
+    while(1){
+        flags[1] = 1;
+        turn = 1;
+        while(flags[0]&&turn == 0);
+    for(int i = 0; i<5; i++){
+        polje[i] = sqrt(polje[i]);
+        }
+    for(int i = 0; i<5; i++){
+        printf("%f ", polje[i]);
+        }
+        printf("\n");
+    flags[1] = 0;
+    sleep(1);
+    }
+}
+----------------------------------------------------------
+student08@linux:~$ gcc -o LV7zad4 LV7zad4.c -lpthread
+student08@linux:~$ ./LV7zad4
+1.000000 2.236068 1.732051 2.645751 2.000000 
+1.000000 5.000000 3.000000 7.000000 4.000000 
+1.000000 5.000000 3.000000 7.000000 4.000000 
+1.000000 5.000000 3.000000 7.000000 4.000000
